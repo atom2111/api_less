@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  graphql-server:
+    image: graphql-server-image
+    build:
+      context: ./ASPLess3
+      dockerfile: Dockerfile
+    ports:
+      - "7219:80"
+    depends_on:
+      - db
+
+  api-gateway:
+    image: api-gateway-image
+    build:
+      context: ./ApiGateway
+      dockerfile: Dockerfile
+    ports:
+      - "7139:80"
+    depends_on:
+      - graphql-server
+
+  db:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlvolume:/var/opt/mssql
+
+volumes:
+  sqlvolume:
